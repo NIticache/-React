@@ -1,84 +1,65 @@
-import React, { Component } from 'react';
-import './App.css';
-import ResultComponent from './components/ResultComponent';
-import KeyPadComponent from "./components/KeyPadComponent";
+import React, { Component } from "react";
+import "./App.css";
+import { Button } from "./components/Button";
+import { Input } from "./components/Input";
+import { ClearButton } from "./components/ClearButton";
+import * as math from "mathjs";
 
 class App extends Component {
-    constructor(){
-        super();
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            result: ""
-        }
-    }
-
-    onClick = button => {
-
-        if(button === "="){
-            this.calculate()
-        }
-
-        else if(button === "C"){
-            this.reset()
-        }
-        else if(button === "CE"){
-            this.backspace()
-        }
-
-        else {
-            this.setState({
-                result: this.state.result + button
-            })
-        }
+    this.state = {
+      input: ""
     };
+  }
 
+  addToInput = val => {
+    this.setState({ input: this.state.input + val });
+  };
 
-    calculate = () => {
-        var checkResult = ''
-        if(this.state.result.includes('--')){
-            checkResult = this.state.result.replace('--','+')
-        }
+  handleEqual = () => {
+    this.setState({ input: math.eval(this.state.input) });
+  };
 
-        else {
-            checkResult = this.state.result
-        }
-
-        try {
-            this.setState({
-                // eslint-disable-next-line
-                result: (eval(checkResult) || "" ) + ""
-            })
-        } catch (e) {
-            this.setState({
-                result: "error"
-            })
-
-        }
-    };
-
-    reset = () => {
-        this.setState({
-            result: ""
-        })
-    };
-
-    backspace = () => {
-        this.setState({
-            result: this.state.result.slice(0, -1)
-        })
-    };
-
-    render() {
-        return (
-            <div>
-                <div className="calculator-body">
-                    <h1>Simple Calculator</h1>
-                    <ResultComponent result={this.state.result}/>
-                    <KeyPadComponent onClick={this.onClick}/>
-                </div>
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div className="app">
+        <div className="calc-wrapper">
+          <Input input={this.state.input} />
+          <div className="row">
+            <Button handleClick={this.addToInput}>7</Button>
+            <Button handleClick={this.addToInput}>8</Button>
+            <Button handleClick={this.addToInput}>9</Button>
+            <Button handleClick={this.addToInput}>/</Button>
+          </div>
+          <div className="row">
+            <Button handleClick={this.addToInput}>4</Button>
+            <Button handleClick={this.addToInput}>5</Button>
+            <Button handleClick={this.addToInput}>6</Button>
+            <Button handleClick={this.addToInput}>X</Button>
+          </div>
+          <div className="row">
+            <Button handleClick={this.addToInput}>1</Button>
+            <Button handleClick={this.addToInput}>2</Button>
+            <Button handleClick={this.addToInput}>3</Button>
+            <Button handleClick={this.addToInput}>+</Button>
+          </div>
+          <div className="row">
+            <Button handleClick={this.addToInput}>.</Button>
+            <Button handleClick={this.addToInput}>0</Button>
+            <Button handleClick={() => this.handleEqual()}>=</Button>
+            <Button handleClick={this.addToInput}>-</Button>
+          </div>
+          <div className="row">
+            <ClearButton handleClear={() => this.setState({ input: "" })}>
+              Clear
+            </ClearButton>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;
